@@ -1,0 +1,29 @@
+graph TD
+    UserA["📱 Productor Agrícola
+(Mobile)"]
+    UserB["💻 Comprador HORECA
+(Web)"]
+
+    WebFront["🌐 Front-end Web/Mobile
+React + Tailwind"]
+    APIGateway["🔒 API Gateway
+.NET Core"]
+
+    DB[("🛢️ Azure SQL Server")]
+
+    UserA --> WebFront
+    UserB --> WebFront
+    WebFront --> APIGateway
+    APIGateway --> DB
+
+    %% Definición de Estilos Adaptados para Dark Mode
+    classDef client fill:#0369a1,stroke:#38bdf8,stroke-width:2px,color:#ffffff;
+    classDef frontend fill:#15803d,stroke:#4ade80,stroke-width:2px,color:#ffffff;
+    classDef backend fill:#6b21a8,stroke:#c084fc,stroke-width:2px,color:#ffffff;
+    classDef database fill:#92400e,stroke:#fbbf24,stroke-width:2px,color:#ffffff;
+
+    %% Aplicación de Clases
+    class UserA,UserB client;
+    class WebFront frontend;
+    class APIGateway backend;
+    class DB database;
