@@ -1,0 +1,24 @@
+graph TD
+    classDef usuario fill:#232F3E,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef frontend fill:#117A65,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef backend fill:#2980B9,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef datos fill:#D35400,stroke:#fff,stroke-width:1px,color:#fff;
+
+    Cliente["👤 Cliente Web / Móvil<br>(Navegador / App)"]:::usuario
+    Gateway["🌐 API Gateway / Reverse Proxy<br>(Azure API Management / YARP)"]:::frontend
+
+    subgraph Cluster_Servicios ["Ecosistema de Microservicios / Módulos (.NET 8 Core)"]
+        AuthService["🔒 Servicio de Autenticación"]:::backend
+        CoreService["⚙️ Lógica de Negocio Principal"]:::backend
+    end
+
+    DB[(🗄️ Base de Datos Relacional<br>Azure SQL Server / PostgreSQL)]:::datos
+    Cache[(⚡ Cache en Memoria<br>Redis Cache)]:::datos
+
+    Cliente -->|Petición HTTPS / REST| Gateway
+    Gateway -->|Valida Token JWT| AuthService
+    Gateway -->|Enruta Petición| CoreService
+    CoreService -->|Lectura/Escritura Transaccional| DB
+    CoreService -->|Lectura Rápida de Sesiones| Cache
+
+    
