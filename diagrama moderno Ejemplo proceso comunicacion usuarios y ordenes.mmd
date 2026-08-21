@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    actor Cliente as 👤 Frontend / Usuario
+    participant GW as 🌐 API Gateway
+    participant Orders as ⚙️ MS Órdenes
+    participant Users as ⚙️ MS Usuarios
+
+    Cliente->>GW: GET /informe-ordenes
+    activate GW
+    GW->>Orders: GET /ordenes (Filtros de fechas)
+    activate Orders
+    Orders-->>GW: Devuelve [ {id_orden: 101, id_cliente: 5, total: 150} ]
+    deactivate Orders
+
+    GW->>Users: GET /usuarios?ids=5 (Petición Batch)
+    activate Users
+    Users-->>GW: Devuelve [ {id_cliente: 5, ciudad: 'Bogotá', edad: 30} ]
+    deactivate Users
+
+    Note over GW: El Gateway cruza los datos:<br/>Une Orden 101 con Ciudad y Edad del Cliente 5
+    GW-->>Cliente: Devuelve JSON unificado (Informe Completo)
+    deactivate GW

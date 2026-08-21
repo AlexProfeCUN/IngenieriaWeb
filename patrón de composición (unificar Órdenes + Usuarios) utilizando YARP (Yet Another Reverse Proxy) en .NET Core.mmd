@@ -1,0 +1,54 @@
+graph TD
+    %% Estilos Visuales Modernos
+    classDef client fill:#232F3E,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef yarp fill:#117A65,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef code fill:#2980B9,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef ms fill:#8E44AD,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef db fill:#7F8C8D,stroke:#fff,stroke-width:1px,color:#fff;
+
+    %% Elementos Principales
+    Cliente[👤 Aplicación Frontend]:::client
+
+    subgraph YARP_Gateway [🌐 API Gateway - YARP en .NET Core]
+        direction TB
+        Kestrel[Kestrel Web Server <br><i>Punto de entrada de red</i>]:::yarp
+        
+        subgraph Engine_YARP [Motor Interno de YARP]
+            ProxyConfig[Configuración Automática <br><i>appsettings.json</i>]:::yarp
+            ReportCtrl[ReportController.cs <br><i>Código C# / LINQ</i>]:::code
+        end
+    end
+
+    %% Microservicios del Backend
+    MS_Orders[⚙️ MS Órdenes <br><i>.NET Core API</i>]:::ms
+    MS_Users[⚙️ MS Usuarios <br><i>.NET Core API</i>]:::ms
+    
+    DB_Orders[(🗄️ BD Órdenes)]:::db
+    DB_Users[(🗄️ BD Usuarios)]:::db
+
+    %% Flujo 1: Tráfico Normal (90% de las peticiones)
+    Cliente ---->|GET /api/users/profile| Kestrel
+    Kestrel --> ProxyConfig
+    ProxyConfig -->|Reenvío Directo / Transparente| MS_Users
+
+    %% Flujo 2: Composición del Informe Complejo (Paso a Paso)
+    Cliente -->|1. GET /api/informe-ventas| Kestrel
+    Kestrel --> ReportCtrl
+
+    ReportCtrl -->|2. HttpClient.GetAsync| MS_Orders
+    MS_Orders --> DB_Orders
+    MS_Orders -.->|3. Retorna JSON de Órdenes| ReportCtrl
+
+    %% Note over ReportCtrl: 4. Procesa con LINQ en memoria:<br/>
+    %% Extrae IDs únicos de clientes<br/>
+    %% y arma el Request Batch.
+
+    ReportCtrl -->|5. HttpClient.PostAsJsonAsync| MS_Users
+    MS_Users --> DB_Users
+    MS_Users -.->|6. Retorna Mapa de Clientes Batch| ReportCtrl
+
+    %% Note over ReportCtrl: 7. Data Stitching (Cosido):<br/>
+    %% Itera órdenes y les inyecta<br/>
+    %% la ciudad y la edad de la lista.
+
+    ReportCtrl ---->|"8. Ok(finalReport) JSON Unificado"| Cliente

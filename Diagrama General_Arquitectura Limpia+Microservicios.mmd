@@ -1,0 +1,58 @@
+graph TD
+    %% Estilos Visuales
+    classDef client fill:#232F3E,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef gateway fill:#117A65,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef presentation fill:#2980B9,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef application fill:#8E44AD,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef domain fill:#27AE60,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef infra fill:#D35400,stroke:#fff,stroke-width:1px,color:#fff;
+    classDef db fill:#7F8C8D,stroke:#fff,stroke-width:1px,color:#fff;
+
+    %% Flujo de Usuario y Gateway
+    Cliente[👤 Aplicación Cliente <br> Web / Móvil]:::client
+    Gateway[🌐 API GATEWAY <br><i>Orquesta y Une los datos</i>]:::gateway
+
+    Cliente -->|1. GET /informe-ventas| Gateway
+
+    %% MICROSERVICIO DE ÓRDENES
+    subgraph MS_Orders [⚙️ Microservicio de Órdenes]
+        direction LR
+        O_Pres[Presentation<br><i>Controllers</i>]:::presentation
+        O_App[Application<br><i>Casos de Uso / Queries</i>]:::application
+        O_Dom[Domain<br><i>Entidades / Contratos</i>]:::domain
+        O_Infra[Infrastructure<br><i>EF Core / HTTP Clients</i>]:::infra
+
+        O_Pres --> O_App
+        O_App --> O_Dom
+        O_Infra -.->|Implementa Interfaces| O_Dom
+        O_App --> O_Infra
+    end
+
+    %% MICROSERVICIO DE USUARIOS
+    subgraph MS_Users [⚙️ Microservicio de Usuarios]
+        direction LR
+        U_Pres[Presentation<br><i>Controllers</i>]:::presentation
+        U_App[Application<br><i>Casos de Uso / Queries</i>]:::application
+        U_Dom[Domain<br><i>Entidades / Contratos</i>]:::domain
+        U_Infra[Infrastructure<br><i>EF Core</i>]:::infra
+
+        U_Pres --> U_App
+        U_App --> U_Dom
+        U_Infra -.->|Implementa Interfaces| U_Dom
+        U_App --> U_Infra
+    end
+
+    %% Bases de Datos independientes
+    DB_Orders[(🗄️ BD Órdenes)]:::db
+    DB_Users[(🗄️ BD Usuarios)]:::db
+
+    O_Infra --> DB_Orders
+    U_Infra --> DB_Users
+
+    %% Flujo de Comunicación paso a paso
+    Gateway -->|2. Pide Órdenes| O_Pres
+    Gateway -->|4. Pide Datos de Usuarios en Batch| U_Pres
+
+    %% Nota de Orquestación final en el Gateway
+    Note["5. El Gateway recibe ambos datos.<br/>Cruza en memoria las Órdenes con<br/>la Ciudad y Edad del Cliente.<br/>Envía el informe final armado."]
+    Gateway -->|6. Retorna Informe Unificado JSON| Note

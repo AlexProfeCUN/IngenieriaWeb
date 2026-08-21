@@ -1,0 +1,25 @@
+graph TD
+%% Definición de estilos modernos
+classDef usuario fill:#232F3E,stroke:#fff,stroke-width:2px,color:#fff;
+classDef frontend fill:#117A65,stroke:#fff,stroke-width:1px,color:#fff;
+classDef backend fill:#2980B9,stroke:#fff,stroke-width:1px,color:#fff;
+classDef datos fill:#D35400,stroke:#fff,stroke-width:1px,color:#fff;
+
+    %% Elementos de la Arquitectura
+    Cliente[👤 Cliente Web / Móvil]:::usuario
+    Gateway["🌐 API Gateway <br><i>(Reverse Proxy / Auth)</i>"]:::frontend
+
+    subgraph Cluster_Microservicios [Ecosistema de Microservicios]
+        AuthService[⚙️ Servicio de Autenticación]:::backend
+        OrderService[⚙️ Servicio de Órdenes]:::backend
+    end
+
+    DB[(🗄️ Base de Datos SQL)]:::datos
+    Broker["✉️ Event Broker <br><i>(KabROKERfka / Functions)</i>"]:::datos
+
+    %% Relaciones y Flujos
+    Cliente -->|1. Petición HTTPS| Gateway
+    Gateway -->|2. Valida Token| AuthService
+    Gateway -->|3. Enruta Comando| OrderService
+    OrderService -->|4. Persiste Estado| DB
+    OrderService -->|5. Publica Evento 'OrdenCreada'| Broker

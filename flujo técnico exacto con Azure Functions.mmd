@@ -1,0 +1,14 @@
+graph LR
+    classDef ms fill:#8E44AD,stroke:#fff,color:#fff;
+    classDef broker fill:#D35400,stroke:#fff,color:#fff;
+    classDef az fill:#117A65,stroke:#fff,color:#fff;
+    classDef db fill:#7F8C8D,stroke:#fff,color:#fff;
+
+    MS_Users[⚙️ MS Usuarios]:::ms
+    Broker[✉️ Kafka / RabbitMQ <br><i>Tópico: usuarios-topic</i>]:::broker
+    AzFunc[⚡ Azure Function <br><i>KafkaTrigger</i>]:::az
+    DB_Orders[(🗄️ BD Órdenes <br><i>Tabla Clientes Cache</i>)]:::db
+
+    MS_Users -->|1. Publica Evento: Cambió Ciudad| Broker
+    Broker -->|2. Despierta de inmediato| AzFunc
+    AzFunc -->|3. Ejecuta UPDATE / INSERT| DB_Orders
