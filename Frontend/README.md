@@ -41,3 +41,18 @@ pull requests y revisiones en el repositorio.
 npm run build
 npm run preview
 ```
+
+## Publicar en GitHub Pages
+
+El workflow `.github/workflows/deploy-frontend.yml` compila el proyecto y
+publica `Frontend/dist` cuando los cambios llegan a `main`. La aplicación está
+configurada para servirse desde `/IngenieriaWeb/`.
+
+Para habilitar la publicación en el repositorio:
+
+1. Integra estos cambios en la rama `main`.
+2. En GitHub, abre **Settings → Pages** y elige **GitHub Actions** como fuente
+   de publicación.
+3. Revisa la ejecución **Deploy frontend to GitHub Pages** en la pestaña
+   **Actions**. Al completarse, el sitio estará disponible en
+   `https://alexprofecun.github.io/IngenieriaWeb/`.
