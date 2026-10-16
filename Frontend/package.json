@@ -2,6 +2,7 @@
   "name": "laboratorio-github-frontend",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://github.io",
   "type": "module",
   "scripts": {
     "dev": "vite",
