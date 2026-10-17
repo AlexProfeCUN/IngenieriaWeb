@@ -202,7 +202,7 @@ function App() {
           <section className="intro">
             <div>
               <div className="eyebrow"><span /> PROYECTO DE CLASE</div>
-              <h1>Construyamos en equipo<span>.</span></h1>
+              <h1>Construyamos en equipo pero en serio<span>.</span></h1>
               <p className="intro-copy">
                 Practica el flujo de trabajo colaborativo con Git y GitHub.
                 Cada tarjeta es un cambio que el equipo puede seguir de principio a fin.
